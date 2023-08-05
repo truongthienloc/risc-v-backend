@@ -1,0 +1,6 @@
+# Module
+env/
+instance/
+
+# Cache
+__pycache__/
