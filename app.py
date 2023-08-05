@@ -7,4 +7,4 @@ def index():
     return "Welcome to RISC-V Assembler"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
