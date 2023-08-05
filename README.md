@@ -21,7 +21,7 @@ env/Scripts/activate.bat
 ### 3. Install library to project:
 
 ```shell
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 
 ### 4. You will code in *app.py*
@@ -35,7 +35,7 @@ flask run
 ## Prepare before deploying
 
 ```shell
-pip freeze > requirement.txt
+pip freeze > requirements.txt
 ```
 
 ## Production
