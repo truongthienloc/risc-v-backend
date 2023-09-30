@@ -15,7 +15,7 @@ git checkout develop
 ```shell
 pip install virtualenv
 virtualenv env
-env/Scripts/activate.bat
+env\Scripts\activate.bat
 ```
 
 ### 3. Install library to project:
