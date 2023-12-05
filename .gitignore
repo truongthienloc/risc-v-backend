@@ -4,3 +4,6 @@ instance/
 
 # Cache
 __pycache__/
+
+# Legancies
+legancies/
