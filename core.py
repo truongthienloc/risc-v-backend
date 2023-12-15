@@ -151,8 +151,8 @@ def core ():
                 s+= 2**i
         if temp[len(temp)-1] == '1':
             s= s-(1<<32)  
-            
         return s
+    
     def data_memory (address, mem_read, mem_write, write_data) :
         global read_data, Data_memory
         if mem_read[0] == '1' :
@@ -175,8 +175,7 @@ def core ():
                 Data_memory[address] = string
             if mem_write == '110' :
                 Data_memory[address] = write_data
-
-            
+        
     def ALU (operand_1 ,operand_2 ,operation) :
         global zero, sign_bit, ALU_result
         if operation == 'z' : 
@@ -580,9 +579,9 @@ def core ():
         instructions += convert_bin_to_hex(instruction_memory[i][28:32])
         instruction_arr ['0x'+(hex (dec('0'+i))[2:]).rjust(8,'0')] = '0x' + instructions 
 
-    instruction_memory = []
-    for i in instruction_arr :
-        instruction_memory.append(str(i)+':\t'+ instruction_arr[i])
+    instruction_memory = instruction_arr
+    # for i in instruction_arr :
+    #     instruction_memory.append(str(i)+':\t'+ instruction_arr[i])
 
     def adjust_all_time_register (j):
         register = all_time_register[j]
@@ -612,16 +611,16 @@ def core ():
     all_time_register = temp_all_time_register
 
 ####------------------------------------------------------------  
-    last_reg = list((all_time_register.keys()))[-1]
-    reg = all_time_register[last_reg]
+    # last_reg = list((all_time_register.keys()))[-1]
+    # reg = all_time_register[last_reg]
     #print (reg)
-    fo_1= open(s[:-2]+'_register'+'.txt', 'w')
-    fo_1.write('Register Expected Results\n')
-    count=0
-    for i in reg :
-        fo_1.write('## expect['+str(count)+'] = '+reg[i]+'\n')
-        count+=1
-    fo_1.close()
+    #fo_1= open(s[:-2]+'_register'+'.txt', 'w')
+    #fo_1.write('Register Expected Results\n')
+    # count=0
+    # for i in reg :
+    #     fo_1.write('## expect['+str(count)+'] = '+reg[i]+'\n')
+    #     count+=1
+    # fo_1.close()
 ####------------------------------------------------------------  
     # registers=[]
     # for i in register :
