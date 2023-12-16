@@ -591,16 +591,16 @@ def core ():
         for i in register :
             if count <10 :
                 if dec(str(register[i])) <0 :
-                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
+                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
                 else :
-                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
+                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
                 #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] += '  '
                 #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] += str (dec(str(register[i])))
             else : 
                 if dec(str(register[i])) <0 :
-                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
+                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
                 else :
-                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
+                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
                 #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] += '  '
                 #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] += str (dec(str(register[i])))
             count+=1
