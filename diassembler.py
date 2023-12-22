@@ -1,8 +1,8 @@
 from app import app, request, json
 from assembler import assembler
 
-@app.route('/diassembler')
-def diassembler () :
+@app.route('/disassembler', methods = ['POST'])
+def disassembler () :
     R_type = {
         '001' : 'sll',      '011' : 'sltu',    '110':'or', 
         '010' : 'slt',      '100' : 'xor',     '111' : 'and', 
