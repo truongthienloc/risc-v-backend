@@ -101,9 +101,9 @@ def core ():
         pc+=4
     pc=0
     #ALL TIME DATA
-    all_time_register = {}
-    all_time_data_memory = {}
-    all_time_grapic = {}
+    all_time_register = []
+    all_time_data_memory = []
+    all_time_grapic = []
     register={
     '00000': '00000000000000000000000000000000',
     '00001': '00000000000000000000000000000000',
@@ -473,14 +473,16 @@ def core ():
             register[write_register] = write_data_r
     
         register['00000'] = '00000000000000000000000000000000'
+        register['pc']    = pc
+        #print (register)
         graphic ()
         
         coppy_register = register.copy()
         coppy_data_memory = Data_memory.copy()
         copp_graphic = color_dir.copy()
-        all_time_register[pc] = coppy_register
-        all_time_data_memory[pc] = coppy_data_memory
-        all_time_grapic[pc] = copp_graphic
+        all_time_register.append(coppy_register)
+        all_time_data_memory.append(coppy_data_memory)
+        all_time_grapic.append(copp_graphic)
 
         # if pc == 4 :
         #     break
@@ -586,29 +588,37 @@ def core ():
     def adjust_all_time_register (j):
         register = all_time_register[j]
         count = 0
-        re = ['zero', 'ra', 'sp', 'gp', 'tp', 't0', 't1', 't2', 's0/fp', 's1', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 't3', 't4', 't5', 't6' ]
+        re = ['zero', 'ra', 'sp', 'gp', 'tp', 't0', 't1', 't2', 's0/fp', 's1', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 't3', 't4', 't5', 't6']
         mdic = {}
         for i in register :
-            if count <10 :
+            if i == 'pc' :
                 if dec(str(register[i])) <0 :
-                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
+                    mdic['pc'.ljust(12, ' ')] = '0x'+hex ((1<<32) + register[i] )[2:].rjust(8, '0')
                 else :
-                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
-                #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] += '  '
-                #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] += str (dec(str(register[i])))
-            else : 
-                if dec(str(register[i])) <0 :
-                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
-                else :
-                    mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
-                #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] += '  '
+                    mdic['pc'.ljust(12, ' ')] = '0x'+hex(register[i])[2:].rjust(8, '0')
+            else:
+                if count <10 :
+                    if dec(str(register[i])) <0 :
+                        mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
+                    else :
+                        mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
+                    #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] += '  '
+                    #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] += str (dec(str(register[i])))
+                else : 
+                    if dec(str(register[i])) <0 :
+                        mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
+                    else :
+                        mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
+                    #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] += '  '
                 #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] += str (dec(str(register[i])))
             count+=1
         return mdic 
-    temp_all_time_register = {}
-    for i in all_time_register :
-        temp_all_time_register[i] = adjust_all_time_register(i)
-    all_time_register = temp_all_time_register
+            
+            
+    temp_all_time_register = []
+    for i in range (len (all_time_register)) :
+        temp_all_time_register.append(adjust_all_time_register(i))
+    all_time_register= temp_all_time_register
 
 ####------------------------------------------------------------  
     # last_reg = list((all_time_register.keys()))[-1]
@@ -644,26 +654,3 @@ def core ():
 
     return {'Registers': all_time_register,'len_register': len(all_time_register), 'Data_memory': all_time_data_memory, 'Instruction_memory': instruction_memory, 'Graphic': all_time_grapic}
 
-    
-'''
-fo= open('Data_Segment.txt','w')
-data_segment = core('Code_editor.txt')
-for j in data_segment['Registers'][(len(data_segment['Registers'])-1)*4]:
-    fo.write(str(j)+'\t'+str(data_segment['Registers'][(len(data_segment['Registers'])-1)*4][j])+ '\n')
-fo.close()'''
-# core('Code_editor.txt')
-# import sys
-# import glob
-# obj_list = []
-# mlist=[]
-# mlist = sys.argv
-
-
-# for i in range (len(mlist)) :
-#     if mlist[i]=='-o':
-#         obj_list= glob.glob(mlist[i+1]+"/**",recursive=True)
-#     if mlist[i].endswith('.s'):
-#         core(mlist[i])
-# for i in range (len(obj_list)) :
-#     if obj_list [i].endswith ('.s') or obj_list[i].endswith('.S'):
-#         core(obj_list[i])
