@@ -592,10 +592,8 @@ def core ():
         mdic = {}
         for i in register :
             if i == 'pc' :
-                if dec(str(register[i])) <0 :
-                    mdic['pc'.ljust(12, ' ')] = '0x'+hex ((1<<32) + register[i] )[2:].rjust(8, '0')
-                else :
-                    mdic['pc'.ljust(12, ' ')] = '0x'+hex(register[i])[2:].rjust(8, '0')
+                mdic['pc'.ljust(12, ' ')] = '0x'+hex(register[i])[2:].rjust(8,'0')
+                print(mdic['pc'.ljust(12, ' ')])
             else:
                 if count <10 :
                     if dec(str(register[i])) <0 :
