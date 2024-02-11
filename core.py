@@ -431,7 +431,7 @@ def core ():
     def graphic () :
         global color_dir
         color_dir = {
-            '0': 'orange', '1' : 'red', '2' : 'yellow', '3' : '', '4' : 'green', '5' : 'pink', '6' : '', '7' : 'green', '8' : 'blue',
+            '0': 'orange', '1' : 'red', '2' : 'yellow', '3' : '', '4' : 'green', '5' : 'pink', '6' : '', '7' : 'green', '8' : 'yellow',
             '9' : '', '10' : '', '11' : '', '12' : '', '13' : 'brown', '14' : 'purple', '15': '', '16' : '', '17' :''
         }
         color_dir['3'] = mux(color_dir['2'], color_dir['1'], ALU_src)
