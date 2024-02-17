@@ -15,6 +15,7 @@ def check_health():
 import assembler
 import core
 import diassembler
+import Pipeline
 
 if __name__ == "__main__":
     app.run()
