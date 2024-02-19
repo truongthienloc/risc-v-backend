@@ -183,7 +183,7 @@ def pipeline ():
     gra = []
 
     def data_memory (address, mem_read, mem_write, write_data) :
-        global read_data, Data_memory
+        # global read_data, Data_memory
 
         if mem_read[0] == '1' :
             if address not in Data_memory :
@@ -216,7 +216,7 @@ def pipeline ():
         return read_data
 
     def ALU (operand_1 ,operand_2 ,operation) :
-        global zero, sign_bit, ALU_result
+        # global zero, sign_bit, ALU_result
         zero= 0
         sign_bit= 0
         #print('alu',operand_1 ,operand_2, operation)
@@ -273,7 +273,7 @@ def pipeline ():
             return input2
 
     def control (opcode, funct3) :
-        global jalr, branch, jal, slt, mem_read, mem_to_reg, ALU_op, mem_write, ALU_src, reg_write, aui_or_lui, unsigned, wb, jump
+        # global jalr, branch, jal, slt, mem_read, mem_to_reg, ALU_op, mem_write, ALU_src, reg_write, aui_or_lui, unsigned, wb, jump
         
         if opcode == '0110011'  : #R-type
             jal =0; jalr = 0;   branch = '000';     aui_or_lui = 0;     wb = 0
@@ -367,7 +367,7 @@ def pipeline ():
                 return imm.rjust(32, imm[0])
 
     def alu_control (alu_op, funct3, funct7):
-        global operation
+        # global operation
         if alu_op == '00' : #   LOAD and STORE and JALR
             operation = '0011'
         if alu_op == '01' : #BRANCH
@@ -417,7 +417,7 @@ def pipeline ():
     def branch_control (jal, jalr, Branch, wb, jump, slt, MemtoReg,
                         pc4, AuiOrLui, Slt, ALU_result, data,
                         rs1, rs2, rd1, rd2,w_reg) :
-        global pc_src_1, pc_src_2, tw_reg, buffer1, buffer2, buffer
+        # global pc_src_1, pc_src_2, tw_reg, buffer1, buffer2, buffer
         vrs1= rd1
         vrs2= rd2
         # print('vrs1', vrs1,'vrs2',vrs2)
@@ -522,7 +522,7 @@ def pipeline ():
 
 
     def ins_fetch ():
-        global pc, if_done, current_pc, gra
+        # global pc, if_done, current_pc, gra
         if pc == (len(instruction_memory))*4:
             if_done = 1
             return
@@ -539,7 +539,7 @@ def pipeline ():
             current_pc = pc
 
     def reg ():
-        global reg_done, blocking, EX_stall, REG, nop_fwd, current_pc, pc, pcs1, pcjalr, rs1, rs2
+        # global reg_done, blocking, EX_stall, REG, nop_fwd, current_pc, pc, pcs1, pcjalr, rs1, rs2
         if if_done == 1:
             reg_done = 1
             return
@@ -608,7 +608,7 @@ def pipeline ():
             'rs2'       : '',
             }
     def ex ():
-        global ex_done, MEM_stall, EX_stall
+        # global ex_done, MEM_stall, EX_stall
 
         if reg_done == 1:
             #print('exd')
@@ -673,7 +673,7 @@ def pipeline ():
         #     #print('********0*******')
 
     def mem ():
-        global mem_done, WB_stall, MEM_stall
+        # global mem_done, WB_stall, MEM_stall
         if ex_done == 1:
             mem_done = 1
             return
@@ -700,7 +700,7 @@ def pipeline ():
     write_data_r = ''
     pre_wb_rd =''
     def write_back():
-        global wb_done, pre_wb_rd, write_data_r, WB_stall
+        # global wb_done, pre_wb_rd, write_data_r, WB_stall
         if mem_done == 1:
             wb_done = 1
             return 
@@ -731,7 +731,7 @@ def pipeline ():
             return data_5 
 
     def forwarding ():
-        global nop_fwd, rs1, rs2
+        # global nop_fwd, rs1, rs2
         fwd2=0; fwd1= 1; flag_x0= 0
         if EX['wb']['wb']==0 and EX['wb']['slt']==0 and EX['wb']['jump']==0 and EX['wb']['mem_to_reg']==0 and EX['ALU_result']!='':
             fwd1 = 0 ; fwd2 =1 #ALU_result
