@@ -781,7 +781,7 @@ def hazard_detection (rs1, rs2, rd, mem_read) :
 
 from assembler import assembler
 #from diassembler import tmp_diassembler
-@app.route('/pipeline')
+@app.route('/pipeline', methods = ['POST'])
 def pipeline ():
     global IF, REG, EX, WB
     global if_done, reg_done, ex_done, mem_done, wb_done 
