@@ -80,30 +80,25 @@ jump=0
 #GRARPHIC
 color_dir = {
     '1' : 'red', '2' : 'yellow', '3' : '', '4' : '', '5' : '', '6' : '', '7' : '', '8' : '',
-    '9' : '', '10' : '', '11' : '', '12' : '', '13' : '', '14' : '', '15': '', '16' : '', '17' :''
+    '9' : '', '10' : '', '11' : '', '12' : '', '13' : '', '14' : '', '15': '', '16' : '', '17' :'',
+    'jal':'', 'jalr':'', 'branch': '', 'AuiOrLui': '', 'wb':'', 'slt':'', 'MemtoRegister':'',
+    'ALUOp': '', 'Unsigned':'', 'MemRead':'', 'MemWrite':'', 'ALUSrc':'', 'RegWrite': '' 
 }
-#ALL TIME DATA
-all_time_register = {}
-all_time_data_memory = {}
-all_time_grapic = {}
 
-@app.route('/core', methods = ['POST'])
+@app.route('/core', methods=['POST'])
 def core ():
     s = json.loads(request.data)['code']
     print(s)
-    global instruction_memory, register, Data_memory, read_data, all_time_register, all_time_data_memory
+    global instruction_memory, register, Data_memory, read_data
     pc=0
     binary_code = []
-    binary_code= assembler(s)
+    binary_code = assembler(s)
     instruction_memory = {}
     for i in binary_code :
         instruction_memory[bin(pc)[2:]] = i
         pc+=4
     pc=0
-    #ALL TIME DATA
-    all_time_register = []
-    all_time_data_memory = []
-    all_time_grapic = []
+
     register={
     '00000': '00000000000000000000000000000000',
     '00001': '00000000000000000000000000000000',
@@ -151,8 +146,8 @@ def core ():
                 s+= 2**i
         if temp[len(temp)-1] == '1':
             s= s-(1<<32)  
+            
         return s
-    
     def data_memory (address, mem_read, mem_write, write_data) :
         global read_data, Data_memory
         if mem_read[0] == '1' :
@@ -175,21 +170,21 @@ def core ():
                 Data_memory[address] = string
             if mem_write == '110' :
                 Data_memory[address] = write_data
-        
+            
     def ALU (operand_1 ,operand_2 ,operation) :
         global zero, sign_bit, ALU_result
         if operation == 'z' : 
             ALU_result = '0'
             return
-       
-        if operation[0] == '1' : #unsigned 
-            operand_1 =dec ('0'+operand_1)
-            operand_2 =dec ('0'+operand_2)
-        else : #signed
-            operand_1 =dec (operand_1)
-            operand_2 =dec (operand_2)
-        #print (operand_1, operand_2)
+        operand_1 =dec (operand_1)
+        operand_2 =dec (operand_2)
 
+        if operation[0] == '1' and ALU_op == '11' : 
+            operand_1 = abs(operand_1)
+
+        if operation[0] == '1' and ALU_op != '11' : 
+            operand_1 = abs(operand_1)
+            operand_2 = abs(operand_2)
         if operand_1 <0 : sign_operand_1 =1
         else: sign_operand_1 =0
 
@@ -242,7 +237,7 @@ def core ():
             return '0'
         if instruction [-7:] == '0010011' or instruction [-7:] == '0000011' or instruction[-7:] == '1100111' :  #I-TYPE
             imm= instruction[0:12]
-            #if instruction[-15:-12] == '011' : return imm.rjust(32, '0')
+            if instruction[-15:-12] == '011' : return imm.rjust(32, '0')
         
         if instruction[-7:] =='0100011' :#S-TYPE
             imm= instruction[0:7]+instruction[20:25] 
@@ -256,7 +251,7 @@ def core ():
         if instruction[-7:] == '0110111' or instruction[-7:] == '0010111': #U-TYPE
             imm= instruction[:20]
         
-        if instruction[-7:] == '0110111' or instruction[:7] == '0010111': #LUI AUIPC
+        if instruction[-7:] == '0110111' or instruction[:7] == '0010111': 
             return imm.rjust(32, '0')
         else:
             return imm.rjust(32, imm[0])
@@ -300,6 +295,7 @@ def core ():
             wb = 0;     mem_to_reg =0;   unsigned = funct3[0];   mem_read = '000'
             mem_write = '1'+ funct3[1:];      ALU_src = 1;   reg_write = 0;       ALU_op = '00' ; slt=0
         
+
         if opcode == '0010011' : #I-FORMAT
             jal =0;             jalr = 0;   branch = '000';     aui_or_lui = 0;     wb = 0
             mem_to_reg =0;      unsigned = 0;       mem_read = '000';   mem_write = '000'
@@ -431,18 +427,37 @@ def core ():
     def graphic () :
         global color_dir
         color_dir = {
-            '0': 'orange', '1' : 'red', '2' : 'yellow', '3' : '', '4' : 'green', '5' : 'pink', '6' : '', '7' : 'green', '8' : 'yellow',
-            '9' : '', '10' : '', '11' : '', '12' : '', '13' : 'brown', '14' : 'purple', '15': '', '16' : '', '17' :''
+            '0': 'FF8000', '1' : 'FF0000', '2' : 'FFFF00', '3' : '', '4' : '00CC00', '5' : 'FF66FF', '6' : '', '7' : '00CC00', '8' : '',
+            '9' : '', '10' : '', '11' : '', '12' : '', '13' : 'B85C00', '14' : '7F00FF', '15': '', '16' : '', '17' :'',
+            'jal':'', 'jalr':'', 'branch': '', 'AuiOrLui': '', 'wb':'', 'slt':'', 'MemtoRegister':'',
+            'ALUOp': '', 'Unsigned':'', 'MemRead':'', 'MemWrite':'', 'ALUSrc':'', 'RegWrite': '' 
         }
-        color_dir['3'] = mux(color_dir['2'], color_dir['1'], ALU_src)
-        color_dir['6'] = mux(color_dir['0'],color_dir['4'], pc_src_1)
-        color_dir['9'] = mux(color_dir['6'], color_dir['5'], pc_src_2)
-        color_dir['10'] = mux(color_dir['5'], color_dir['8'], mem_to_reg)
-        color_dir['11'] = mux(color_dir['10'], color_dir['0'], jump)
-        color_dir['12'] = mux(color_dir['14'], color_dir['13'], sign_bit)
-        color_dir['15'] = mux(color_dir['11'], color_dir['12'], slt)
-        color_dir['16'] = mux(color_dir['7'], color_dir['1'], aui_or_lui)
-        color_dir['17'] = mux(color_dir['15'], color_dir['16'], wb)
+        
+        color_dir['3']              = mux(color_dir['2'], color_dir['1'], ALU_src)
+        color_dir['6']              = mux(color_dir['0'],color_dir['4'], pc_src_1)
+        color_dir['9']              = mux(color_dir['6'], color_dir['5'], pc_src_2)
+        color_dir['10']             = mux(color_dir['5'], color_dir['8'], mem_to_reg)
+        color_dir['11']             = mux(color_dir['10'], color_dir['0'], jump)
+        color_dir['12']             = mux(color_dir['14'], color_dir['13'], sign_bit)
+        color_dir['15']             = mux(color_dir['11'], color_dir['12'], slt)
+        color_dir['16']             = mux(color_dir['7'], color_dir['1'], aui_or_lui)
+        color_dir['17']             = mux(color_dir['15'], color_dir['16'], wb)
+        color_dir['8']              = mux('00FFFF', '', mem_read)
+        color_dir['jal']            =jal
+        color_dir['jalr']           =jalr
+        color_dir['branch']         =branch
+        color_dir['AuiOrLui']       = aui_or_lui
+        color_dir['wb']             = wb
+        color_dir['slt']            =slt
+        color_dir['MemtoRegister']  = mem_to_reg
+        color_dir['ALUOp']          = ALU_op
+        color_dir['Unsigned']       =unsigned
+        color_dir['MemRead']        =mem_read
+        color_dir['MemWrite']       = mem_write
+        color_dir['ALUSrc']         = ALU_src
+        color_dir['RegWrite']       = reg_write 
+
+
 
     while pc < 4*len(instruction_memory) :
         global zero, sign_bit
@@ -454,10 +469,10 @@ def core ():
         read_register_1 = instruction [12:17]
         read_register_2 = instruction [7:12]
         write_register  = instruction [20:25]
-        read_data_1     = register[read_register_1]
-        read_data_2     = register[read_register_2]
+        read_data_1 = register[read_register_1]
+        read_data_2 = register[read_register_2]
         
-        imm= imm_gen(instruction)
+        imm=imm_gen(instruction)
         alu_control(ALU_op, instruction[17:20], instruction[1])
         ALU(read_data_1, mux(read_data_2,imm, ALU_src), operation)  
         branch_control(jal, jalr, branch)
@@ -473,19 +488,7 @@ def core ():
             register[write_register] = write_data_r
     
         register['00000'] = '00000000000000000000000000000000'
-        register['pc']    = pc
-        #print (register)
         graphic ()
-        
-        coppy_register = register.copy()
-        coppy_data_memory = Data_memory.copy()
-        copp_graphic = color_dir.copy()
-        all_time_register.append(coppy_register)
-        all_time_data_memory.append(coppy_data_memory)
-        all_time_grapic.append(copp_graphic)
-
-        # if pc == 4 :
-        #     break
         pc = mux(mux(pc+4,(dec(imm)<<1)+pc, pc_src_1), ALU_result, pc_src_2)
 
     def convert_bin_to_hex (binary_code) :
@@ -579,68 +582,54 @@ def core ():
         instructions += convert_bin_to_hex(instruction_memory[i][20:24])
         instructions += convert_bin_to_hex(instruction_memory[i][24:28])
         instructions += convert_bin_to_hex(instruction_memory[i][28:32])
-        instruction_arr ['0x'+(hex (dec('0'+i))[2:]).rjust(8,'0')] = '0x' + instructions 
+        instruction_arr [dec('0'+i)] = '0x' + instructions 
 
-    instruction_memory = instruction_arr
-    # for i in instruction_arr :
-    #     instruction_memory.append(str(i)+':\t'+ instruction_arr[i])
+    instruction_memory = []
+    for i in instruction_arr :
+        instruction_memory.append(str(i)+':\t'+ instruction_arr[i])
 
-    def adjust_all_time_register (j):
-        register = all_time_register[j]
-        count = 0
-        re = ['zero', 'ra', 'sp', 'gp', 'tp', 't0', 't1', 't2', 's0/fp', 's1', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 't3', 't4', 't5', 't6']
-        mdic = {}
-        for i in register :
-            if i == 'pc' :
-                mdic['pc'.ljust(12, ' ')] = '0x'+hex(register[i])[2:].rjust(8,'0')
-                print(mdic['pc'.ljust(12, ' ')])
-            else:
-                if count <10 :
-                    if dec(str(register[i])) <0 :
-                        mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
-                    else :
-                        mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
-                    #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] += '  '
-                    #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] += str (dec(str(register[i])))
-                else : 
-                    if dec(str(register[i])) <0 :
-                        mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
-                    else :
-                        mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
-                    #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] += '  '
-                #mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] += str (dec(str(register[i])))
-            count+=1
-        return mdic 
-            
-            
-    temp_all_time_register = []
-    for i in range (len (all_time_register)) :
-        temp_all_time_register.append(adjust_all_time_register(i))
-    all_time_register= temp_all_time_register
+    count = 0
+    re = ['zero', 'ra', 'sp', 'gp', 'tp', 't0', 't1', 't2', 's0/fp', 's1', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 't3', 't4', 't5', 't6' ]
+    mdic = {}
+    for i in register :
+        if count <10 :
+            if dec(str(register[i])) <0 :
+                mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
+            else :
+                mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
+            mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] += '  '
+            mdic['x'+ str(count) + (' ('+re[count]+')').ljust(10, ' ')+ ':'] += str (dec(str(register[i])))
+        else : 
+            if dec(str(register[i])) <0 :
+                mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] = '0x'+hex ((1<<32) +dec(str(register[i])))[2:].rjust(8, '0')
+            else :
+                mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] = '0x'+hex(dec(str(register[i])))[2:].rjust(8, '0')
+            mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] += '  '
+            mdic['x'+ str(count) + (' ('+re[count]+')').ljust(9, ' ')+ ':'] += str (dec(str(register[i])))
+        count+=1
+    register = mdic 
 
-####------------------------------------------------------------  
-    # last_reg = list((all_time_register.keys()))[-1]
-    # reg = all_time_register[last_reg]
-    #print (reg)
-    #fo_1= open(s[:-2]+'_register'+'.txt', 'w')
-    #fo_1.write('Register Expected Results\n')
-    # count=0
-    # for i in reg :
-    #     fo_1.write('## expect['+str(count)+'] = '+reg[i]+'\n')
-    #     count+=1
-    # fo_1.close()
-####------------------------------------------------------------  
-    # registers=[]
-    # for i in register :
-    # registers.append(i +'\t'+ register[i])
+ ####------------------------------   
+    '''fo_1= open(s[:-2]+'_register'+'.txt', 'w')
+    fo_1.write('Register Expected Results\n')
+    count=0
+    for i in register :
+        fo_1.write('## expect['+str(count)+'] = '+register[i][:10]+'\n')
+        count+=1
+    fo_1.close()'''
+####-------------------------------
 
-    DATA_list = {} 
+    registers=[]
+    for i in register :
+        registers.append(i +'\t'+ register[i])
+    DATA_list = {}
     for i in Data_memory :
         DATA_list[convert_hextodec('0x'+ hex(dec('0'+i))[2:])] = i
     DATA_list = sorted(DATA_list.keys())
 
     memdic = {}
-    for i in range (len(DATA_list)) : 
+    for i in range (len(DATA_list)) :
+    
         DATA_list[i] = bin(DATA_list[i])[2:].rjust(32, '0')
         if dec(Data_memory[DATA_list[i]]) < 0 :
             memdic ['0x'+ hex(dec('0'+ DATA_list[i]))[2:].rjust(8, '0')+':'] = ('0x'+ hex ((1<<32) + dec(Data_memory[DATA_list[i]]))[2:].rjust(8, '0')) + ' ' + str(dec(Data_memory[DATA_list[i]]))
@@ -650,5 +639,29 @@ def core ():
     for i in memdic :
         Data_memory.append(i+'\t'+memdic[i])   
 
-    return {'Registers': all_time_register,'len_register': len(all_time_register), 'Data_memory': all_time_data_memory, 'Instruction_memory': instruction_memory, 'Graphic': all_time_grapic}
+    return {'Registers': registers, 'Data_memory':Data_memory, 'Instruction_memory': instruction_memory, 'Graphic': color_dir}
 
+'''
+fo= open('Data_Segment.txt','w')
+data_segment = core('Code_editor.txt')
+for i in data_segment :
+    fo.write (i+':\t'+'\n')
+    for j in data_segment[i] :
+        fo.write(str(j) + '\n')
+fo.close()'''
+
+'''import sys
+import glob
+obj_list = []
+mlist=[]
+mlist = sys.argv
+
+
+for i in range (len(mlist)) :
+    if mlist[i]=='-o':
+        obj_list= glob.glob(mlist[i+1]+"/**",recursive=True)
+    if mlist[i].endswith('.s'):
+        core(mlist[i])
+for i in range (len(obj_list)) :
+    if obj_list [i].endswith ('.s') or obj_list[i].endswith('.S'):
+        core(obj_list[i])'''
