@@ -92,7 +92,7 @@ def core ():
     global instruction_memory, register, Data_memory, read_data
     pc=0
     binary_code = []
-    binary_code = assembler(s)
+    binary_code= assembler(s)
     instruction_memory = {}
     for i in binary_code :
         instruction_memory[bin(pc)[2:]] = i
@@ -584,9 +584,9 @@ def core ():
         instructions += convert_bin_to_hex(instruction_memory[i][28:32])
         instruction_arr [dec('0'+i)] = '0x' + instructions 
 
-    instruction_memory = []
-    for i in instruction_arr :
-        instruction_memory.append(str(i)+':\t'+ instruction_arr[i])
+    instruction_memory = instruction_arr
+    # for i in instruction_arr :
+    #     instruction_memory.append(str(i)+':\t'+ instruction_arr[i])
 
     count = 0
     re = ['zero', 'ra', 'sp', 'gp', 'tp', 't0', 't1', 't2', 's0/fp', 's1', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 't3', 't4', 't5', 't6' ]
