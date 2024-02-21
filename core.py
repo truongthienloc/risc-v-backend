@@ -673,7 +673,6 @@ def core ():
 
     return {'Registers': all_time_register,'len_register': len(all_time_register), 'Data_memory': all_time_data_memory, 'Instruction_memory': instruction_memory, 'Graphic': all_time_grapic}
 
-core()    
 '''
 fo= open('Data_Segment.txt','w')
 data_segment = core('Code_editor.txt')
