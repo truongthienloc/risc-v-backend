@@ -648,6 +648,39 @@ def core ():
         temp_all_time_register.append(adjust_all_time_register(i))
     all_time_register= temp_all_time_register
 
+####------------------------------------------------------------  
+    # last_reg = list((all_time_register.keys()))[-1]
+    # reg = all_time_register[last_reg]
+    #print (reg)
+    #fo_1= open(s[:-2]+'_register'+'.txt', 'w')
+    #fo_1.write('Register Expected Results\n')
+    # count=0
+    # for i in reg :
+    #     fo_1.write('## expect['+str(count)+'] = '+reg[i]+'\n')
+    #     count+=1
+    # fo_1.close()
+####------------------------------------------------------------  
+    # registers=[]
+    # for i in register :
+    # registers.append(i +'\t'+ register[i])
+
+    DATA_list = {} 
+    for i in Data_memory :
+        DATA_list[convert_hextodec('0x'+ hex(dec('0'+i))[2:])] = i
+    DATA_list = sorted(DATA_list.keys())
+
+    memdic = {}
+    for i in range (len(DATA_list)) : 
+        DATA_list[i] = bin(DATA_list[i])[2:].rjust(32, '0')
+        if dec(Data_memory[DATA_list[i]]) < 0 :
+            memdic ['0x'+ hex(dec('0'+ DATA_list[i]))[2:].rjust(8, '0')+':'] = ('0x'+ hex ((1<<32) + dec(Data_memory[DATA_list[i]]))[2:].rjust(8, '0')) + ' ' + str(dec(Data_memory[DATA_list[i]]))
+        else :
+            memdic ['0x'+ hex(dec('0'+ DATA_list[i]))[2:].rjust(8, '0')+':'] = ('0x'+ hex (dec(Data_memory[DATA_list[i]]))[2:].rjust(8, '0')) + ' ' + str(dec(Data_memory[DATA_list[i]]))
+    Data_memory = []
+    for i in memdic :
+        Data_memory.append(i+'\t'+memdic[i])   
+
+    return {'Registers': all_time_register,'len_register': len(all_time_register), 'Data_memory': all_time_data_memory, 'Instruction_memory': instruction_memory, 'Graphic': all_time_grapic}
 '''
 fo= open('Data_Segment.txt','w')
 data_segment = core('Code_editor.txt')
