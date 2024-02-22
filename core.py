@@ -80,10 +80,10 @@ jump=0
 
 #GRARPHIC
 color_dir = {
-    '1' : 'red', '2' : 'yellow', '3' : '', '4' : '', '5' : '', '6' : '', '7' : '', '8' : '',
-    '9' : '', '10' : '', '11' : '', '12' : '', '13' : '', '14' : '', '15': '', '16' : '', '17' :'',
+    '0': 'FF8000', '1' : 'FF0000', '2' : 'FFFF00', '3' : '', '4' : '00CC00', '5' : 'FF66FF', '6' : '', '7' : '00CC00', '8' : '',
+    '9' : '', '10' : '', '11' : '', '12' : '', '13' : 'B85C00', '14' : '7F00FF', '15': '', '16' : '', '17' :'',
     'jal':'', 'jalr':'', 'branch': '', 'AuiOrLui': '', 'wb':'', 'slt':'', 'MemtoRegister':'',
-    'ALUOp': '', 'Unsigned':'', 'MemRead':'', 'MemWrite':'', 'ALUSrc':'', 'RegWrite': '' 
+    'ALUOp': '', 'Unsigned':'', 'MemRead':'', 'MemWrite':'', 'ALUSrc':'', 'RegWrite': '', 'zero' :'', 'sign-bit':''
 }
 #ALL TIME DATA
 all_time_register = []
@@ -438,7 +438,8 @@ def core ():
                 '0': 'FF8000', '1' : 'FF0000', '2' : 'FFFF00', '3' : '', '4' : '00CC00', '5' : 'FF66FF', '6' : '', '7' : '00CC00', '8' : '',
                 '9' : '', '10' : '', '11' : '', '12' : '', '13' : 'B85C00', '14' : '7F00FF', '15': '', '16' : '', '17' :'',
                 'jal':'', 'jalr':'', 'branch': '', 'AuiOrLui': '', 'wb':'', 'slt':'', 'MemtoRegister':'',
-                'ALUOp': '', 'Unsigned':'', 'MemRead':'', 'MemWrite':'', 'ALUSrc':'', 'RegWrite': '' 
+                'ALUOp': '', 'Unsigned':'', 'MemRead':'', 'MemWrite':'', 'ALUSrc':'', 'RegWrite': '', 'zero' :'', 'sign-bit':'',
+                'pcsrc1':'', 'pcsrc2': ''
             }
             
             color_dir['3']              = mux(color_dir['2'], color_dir['1'], ALU_src)
@@ -450,7 +451,7 @@ def core ():
             color_dir['15']             = mux(color_dir['11'], color_dir['12'], slt)
             color_dir['16']             = mux(color_dir['7'], color_dir['1'], aui_or_lui)
             color_dir['17']             = mux(color_dir['15'], color_dir['16'], wb)
-            color_dir['8']              = mux('00FFFF', '', mem_read)
+            color_dir['8']              = mux('', '00FFFF', mem_read)
             color_dir['jal']            = jal
             color_dir['jalr']           = jalr
             color_dir['branch']         = branch
@@ -458,12 +459,19 @@ def core ():
             color_dir['wb']             = wb
             color_dir['slt']            = slt
             color_dir['MemtoRegister']  = mem_to_reg
-            color_dir['ALUOp']          = ALU_op
+            if ALU_op == 'z':
+                color_dir['ALUOp']          = '0'
+            else:
+                color_dir['ALUOp']          = '1'
             color_dir['Unsigned']       = unsigned
             color_dir['MemRead']        = mem_read
             color_dir['MemWrite']       = mem_write
             color_dir['ALUSrc']         = ALU_src
             color_dir['RegWrite']       = reg_write 
+            color_dir['sign-bit']       = sign_bit
+            color_dir['zero']           = zero
+            color_dir['pcsrc1']         =pc_src_1
+            color_dir['pcsrc2']         =pc_src_2
 
     while pc < 4*len(instruction_memory) :
         global zero, sign_bit
