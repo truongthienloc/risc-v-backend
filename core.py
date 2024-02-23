@@ -445,13 +445,14 @@ def core ():
             color_dir['3']              = mux(color_dir['2'], color_dir['1'], ALU_src)
             color_dir['6']              = mux(color_dir['0'],color_dir['4'], pc_src_1)
             color_dir['9']              = mux(color_dir['6'], color_dir['5'], pc_src_2)
+            color_dir['8']              = mux('', '00FFFF', int (mem_read[0]))
             color_dir['10']             = mux(color_dir['5'], color_dir['8'], mem_to_reg)
             color_dir['11']             = mux(color_dir['10'], color_dir['0'], jump)
             color_dir['12']             = mux(color_dir['14'], color_dir['13'], sign_bit)
             color_dir['15']             = mux(color_dir['11'], color_dir['12'], slt)
             color_dir['16']             = mux(color_dir['7'], color_dir['1'], aui_or_lui)
             color_dir['17']             = mux(color_dir['15'], color_dir['16'], wb)
-            color_dir['8']              = mux('', '00FFFF', int (mem_read[0]))
+            
             color_dir['jal']            = jal
             color_dir['jalr']           = jalr
             color_dir['branch']         = branch
