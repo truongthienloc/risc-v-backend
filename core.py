@@ -451,7 +451,7 @@ def core ():
             color_dir['15']             = mux(color_dir['11'], color_dir['12'], slt)
             color_dir['16']             = mux(color_dir['7'], color_dir['1'], aui_or_lui)
             color_dir['17']             = mux(color_dir['15'], color_dir['16'], wb)
-            color_dir['8']              = mux('1', '00FFFF', int (mem_read[0]))
+            color_dir['8']              = mux('', '00FFFF', int (mem_read[0]))
             color_dir['jal']            = jal
             color_dir['jalr']           = jalr
             color_dir['branch']         = branch
